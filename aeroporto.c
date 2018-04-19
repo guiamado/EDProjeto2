@@ -22,15 +22,25 @@ Node* retira_inicio (Node* ini);
 int vazia (Fila* f);
 int retira (Fila* f);
 void libera(Fila* f);
+void imprime_fila (Fila* f);
 int geraRand(int min, int max);
 
 int main ()
 {
-	int teste;
+	Fila* f = cria_fila ();
 
-	//teste = geraRand(0,3);
-	
-	//printf("%d", &teste);
+	insere(f,2);
+	insere(f,5);
+	insere(f,1);
+	insere(f,4);
+	imprime_fila(f);
+	retira(f);
+	printf("\n");
+	imprime_fila(f);
+	retira(f);
+	printf("\n");
+	imprime_fila(f);
+	libera(f);	
 
 	return 0;
 }
@@ -118,16 +128,7 @@ void imprime_fila (Fila* f)
 
 	for (no = f->inicio; no != NULL; no = no->prox)
 	{
-		printf("%d\n", no->info);
+		printf("%d", no->info);
 	}
 }
 
-int geraRand(int min, int max)
-{
-	int r;
-
-	srand(time(NULL));
-	r=min+rand()%(max-min+1);
-
-	return r;
-}
