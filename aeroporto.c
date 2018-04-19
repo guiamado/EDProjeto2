@@ -21,6 +21,7 @@ void insere (Fila* f, int v);
 Node* retira_inicio (Node* ini);
 int vazia (Fila* f);
 int retira (Fila* f);
+void libera(Fila* f);
 int geraRand(int min, int max);
 
 int main ()
@@ -109,6 +110,16 @@ void libera(Fila* f)
 	}
 
 	free(f);
+}
+
+void imprime_fila (Fila* f)
+{
+	Node* no;
+
+	for (no = f->inicio; no != NULL; no = no->prox)
+	{
+		printf("%d\n", no->info);
+	}
 }
 
 int geraRand(int min, int max)
