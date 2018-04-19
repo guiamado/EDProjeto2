@@ -18,6 +18,9 @@ typedef struct fila Fila;
 Fila* cria_fila();
 Node* insere_fim (Node* fim, int v);
 void insere (Fila* f, int v);
+Node* retira_inicio (Node* ini);
+int vazia (Fila* f);
+int retira (Fila* f);
 int geraRand(int min, int max);
 
 int main ()
@@ -60,6 +63,52 @@ void insere (Fila* f, int v)
 
 	if(f->inicio == NULL)
 		f->inicio = f->fim;
+}
+
+Node* retira_inicio (Node* ini)
+{
+	Node* no = ini->prox;
+	free(ini);
+	return no;
+}
+
+int vazia (Fila* f)
+{
+	return (f->inicio == NULL);
+}
+
+int retira (Fila* f)
+{
+	int v;
+
+	if(vazia(f))
+	{
+		printf("A Fila esta vazia!!");
+		return 0;
+	}
+
+	v = f->inicio->info;
+
+	f->inicio = retira_inicio(f->inicio);
+
+	if (f->inicio ==NULL)
+	{
+		f->fim = NULL;
+	}
+}
+
+void libera(Fila* f)
+{
+	Node* no = f->inicio;
+
+	while (no != NULL)
+	{
+		Node* t = no->prox;
+		free(no);
+		no = t;
+	}
+
+	free(f);
 }
 
 int geraRand(int min, int max)
