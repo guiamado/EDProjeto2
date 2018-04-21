@@ -9,18 +9,26 @@ struct noh {
 };
 typedef struct noh Node;
 
-struct noh2 {
-	int info;
-	struct noh2* prox;
-	struct noh2* ant;
-};
-typedef struct noh2 Node2;
-
 struct fila {
 	Node* inicio;
 	Node* fim;
 };
 typedef struct fila Fila;
+
+//-------------------------------
+struct informa {
+	int NomeVoo;
+	int comb;
+};
+typedef struct informa info;
+//-------------------------------
+
+struct noh2 {
+	struct informa info;
+	struct noh2* prox;
+	struct noh2* ant;
+};
+typedef struct noh2 Node2;
 
 struct fila2 {
 	Node2* inicio;
@@ -38,34 +46,47 @@ int retira (Fila* f);
 void libera(Fila* f);
 void imprime_fila (Fila* f);
 int geraRand(int min, int max);
+
 //-------------------------------
-Node2* insere2_inicio (Node2* f, int v);
-Node2* insere2_fim (Node2* f, int v);
-void insereIni (Fila2* f, int v);
-void insereFim (Fila2* f, int v);
+
+Fila2* cria_fila2();
+Node2* insere2_inicio (Node2* f, int v, int p);
+Node2* insere2_fim (Node2* f, int v, int p);
+void insereIni (Fila2* f, int v, int p);
+void insereFim (Fila2* f, int v, int p);
 Node2* retira2_inicio (Node2* inicio);
 Node2* retira2_fim (Node2* fim);
 int retiraIni (Fila2* f);
 int retiraFim (Fila2* f);
 void libera2 (Fila2* f);
 int vazia2 (Fila2* f);
+void imprime_fila2 (Fila2* f);
+
 //-------------------------------
+int geraNumRand ();
+//-------------------------------
+
 int main ()
 {
-	Fila* f = cria_fila ();
+	int i,NVoos = 0, combustivel;
 
-	insere(f,2);
-	insere(f,5);
-	insere(f,1);
-	insere(f,4);
-	imprime_fila(f);
-	retira(f);
-	printf("\n");
-	imprime_fila(f);
-	retira(f);
-	printf("\n");
-	imprime_fila(f);
-	libera(f);	
+	printf("Aeroporto Internacional de Guadalupe");
+
+	NVoos = rand() % 42;
+	Fila2* fila = cria_fila2();
+	combustivel = rand() % 13;
+	for (i = 0; i<= NVoos; i++)
+	{
+		if (fila->inicio == NULL)
+			insereIni(fila, geraNumRand(), combustivel);
+		else if (fila->inicio->prox->info.comb > fila->inicio->info.comb)
+			insereIni(fila, geraNumRand(), combustivel);
+		else
+			insereFim(fila,geraNumRand(), combustivel);
+	}
+	
+	imprime_fila2(fila);
+	libera2(fila);	
 
 	return 0;
 }
@@ -158,11 +179,22 @@ void imprime_fila (Fila* f)
 }
 
 //-------------------------------
-Node2* insere2_inicio (Node2* inicio, int v)
+Fila2* cria_fila2()
+{
+	Fila2* fila = (Fila2*) malloc(sizeof(Fila2));
+
+	fila->inicio = fila->fim = NULL;
+
+	return fila;
+
+}
+
+Node2* insere2_inicio (Node2* inicio, int v, int p)
 {
 	Node2* no = (Node2*) malloc(sizeof(Node2));
 
-	no->info = v;
+	no->info.NomeVoo = v;
+	no->info.comb = p;
 	no->prox = inicio;
 	no->ant = NULL;
 
@@ -171,11 +203,12 @@ Node2* insere2_inicio (Node2* inicio, int v)
 	return no;
 }
 
-Node2* insere2_fim (Node2* fim, int v)
+Node2* insere2_fim (Node2* fim, int v, int p)
 {
 	Node2* no = (Node2*) malloc(sizeof(Node2));
 
-	no->info = v;
+	no->info.NomeVoo = v;
+	no->info.comb = p;
 	no->prox = NULL;
 	no->ant = fim;
 
@@ -184,17 +217,17 @@ Node2* insere2_fim (Node2* fim, int v)
 	return no;
 }
 
-void insereIni (Fila2* f, int v)
+void insereIni (Fila2* f, int v, int p)
 {
-	f->inicio = insere2_inicio(f->inicio,v);
+	f->inicio = insere2_inicio(f->inicio, v, p);
 	if (f->fim == NULL)
 		f->fim = f->inicio;
 }
 
-void insereFim (Fila2* f, int v)
+void insereFim (Fila2* f, int v, int p)
 {
-	f->fim = insere2_fim(f->fim,v);
-	if (f->fim == NULL)
+	f->fim = insere2_fim(f->fim, v, p);
+	if (f->inicio == NULL)
 		f->inicio = f->fim;
 }
 
@@ -218,7 +251,7 @@ Node2* retira2_fim (Node2* fim)
 
 int retiraIni (Fila2* f)
 {
-	int v;
+	int v,p;
 
 	if (vazia2(f))
 	{
@@ -226,16 +259,17 @@ int retiraIni (Fila2* f)
 		return 0;
 	}
 
-	v = f->inicio->info;
+	v = f->inicio->info.NomeVoo;
+	p = f->inicio->info.comb;
 	f->inicio = retira2_inicio(f->inicio);
 	if (f->inicio == NULL)
 		f->fim = NULL;
-	return v;
+	return v,p;
 }
 
 int retiraFim (Fila2* f)
 {
-	int v;
+	int v,p;
 
 	if (vazia2(f))
 	{
@@ -243,11 +277,12 @@ int retiraFim (Fila2* f)
 		return 0;
 	}
 
-	v = f->fim->info;
+	v = f->fim->info.NomeVoo;
+	p = f->fim->info.comb;
 	f->fim = retira2_fim(f->fim);
 	if (f->fim == NULL)
 		f->inicio = NULL;
-	return v;
+	return v,p;
 }
 
 void libera2(Fila2* f)
@@ -267,4 +302,26 @@ void libera2(Fila2* f)
 int vazia2 (Fila2* f)
 {
 	return (f->inicio == NULL);
+}
+
+
+void imprime_fila2 (Fila2* f)
+{
+	Node2* no;
+
+	for (no = f->inicio; no != NULL; no = no->prox)
+	{
+		printf("%d", no->info);
+	}
+}
+
+//-------------------------------
+
+int geraNumRand ()
+{
+	int v;
+	v = 1000 + rand() % 9999;
+	if (v <= 9999)
+		return v;
+
 }
